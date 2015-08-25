@@ -17,11 +17,12 @@ from sqlite_cache import SqliteCache
 cache = SqliteCache("cache.sqlite") 
 
 @app.route('/', methods=['GET'])
+@app.route('/<source>/top/<top>', methods=['GET'])
 @app.route('/<source>', methods=['GET'])
-def hej(source="dn.se"):   
+def hej(source="dn.se", top=25):   
 
-    if cache.get(source): # Found in cache
-        xs, columns, today = cache.get(source)
+    if cache.get(str(source)+str(top)): # Found in cache
+        xs, columns, today = cache.get(str(source)+str(top))
     else:
         engine = sq.create_engine("sqlite:///stats.sqlite")
         df = pd.read_sql_table("stats", engine)
@@ -63,7 +64,7 @@ def hej(source="dn.se"):
             return rs
 
         fig, ax = plt.subplots(figsize=(17,12))
-        top_articles = get_top_articles(df, n=25)
+        top_articles = get_top_articles(df, n=int(top)+2)
         colors = cm.Paired(np.linspace(0, 1, len(top_articles)))
 
         xs = {url: 'x' + str(i+1) for i, url in enumerate(top_articles)}
@@ -92,7 +93,7 @@ def hej(source="dn.se"):
             timeseries.append([url] + cpms)
             
         columns = data + timeseries 
-        cache.set(source, (xs, columns, today), timeout=60*60) 
+        cache.set(str(source)+str(top), (xs, columns, today), timeout=60*60) 
 
     return render_template("index.html", xs=xs, columns=columns, today=today)
 
