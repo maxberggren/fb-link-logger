@@ -1,0 +1,10 @@
+dataset==0.5.5
+Flask==0.10.1
+gunicorn==19.3.0
+Jinja2==2.7.3
+numpy==1.9.2
+pandas==0.16.2
+progressbar==2.3
+requests==2.5.3
+SQLAlchemy==0.9.9
+Werkzeug==0.10.4

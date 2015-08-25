@@ -1,0 +1,1 @@
+web: gunicorn GUIapp.views:app --log-file=-
