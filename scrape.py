@@ -14,7 +14,6 @@ import dataset
 import datetime
 import time
 from random import shuffle
-import config as c
 import json
 import time
 import sys
