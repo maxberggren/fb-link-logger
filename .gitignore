@@ -3,3 +3,5 @@ venv
 config.py
 old/*
 lab.ipynb
+.DS_Store
+.ipynb_checkpoints/lab-checkpoint.ipynb
