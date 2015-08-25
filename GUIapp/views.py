@@ -22,7 +22,9 @@ def hej(source="dn.se"):
     df = pd.read_sql_table("stats", engine)
     df = df.set_index(pd.DatetimeIndex(df['timestamp']))
     df = df[df['source'] == "http://" + source]
-    print df
+
+    if df.empty:
+        return render_template("index.html", xs=None, columns=None, today=None)
 
     today = datetime.date.today()
     from_date = today - datetime.timedelta(days=1)
@@ -86,5 +88,5 @@ def hej(source="dn.se"):
         
 
     columns = data + timeseries 
-    return render_template("index.html", data=None, xs=xs, columns=columns, today=today)
+    return render_template("index.html", xs=xs, columns=columns, today=today)
 
