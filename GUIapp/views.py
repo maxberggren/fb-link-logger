@@ -19,6 +19,7 @@ cache = SqliteCache("cache.sqlite")
 @app.route('/', methods=['GET'])
 @app.route('/<source>/top/<top>', methods=['GET'])
 @app.route('/<source>', methods=['GET'])
+@app.route('/<source>/', methods=['GET'])
 def hej(source="dn.se", top=25):   
 
     if cache.get(str(source)+str(top)): # Found in cache
@@ -95,5 +96,5 @@ def hej(source="dn.se", top=25):
         columns = data + timeseries 
         cache.set(str(source)+str(top), (xs, columns, today), timeout=60*60) 
 
-    return render_template("index.html", xs=xs, columns=columns, today=today)
+    return render_template("index.html", xs=xs, columns=columns, today=today, source=source)
 
