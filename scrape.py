@@ -17,6 +17,7 @@ from random import shuffle
 import config as c
 import json
 import time
+import sys
 
 catch_errors = (urllib2.HTTPError, 
                 urllib2.URLError, 
@@ -31,6 +32,7 @@ def get_links(url, restrict_to, deeper=True, limit=False):
 
     try:
         html = urllib2.urlopen(url).read()
+        #html = requests.get(url, allow_redirects=True).text
         soup = BeautifulSoup(html)
         
         links = set()
@@ -94,15 +96,15 @@ def get_stats(url):
     return data
 
 def get_major_links(url):
-    short_name = url.split("://")[-1]
-    return get_links(url, restrict_to=short_name, limit=1)
+    short_name = url.split("://")[-1].replace("www.", "")
+    return get_links(url, restrict_to=short_name, limit=10)
 
 def get_active_links(db):
 
     today = datetime.date.today()
     from_date = today - datetime.timedelta(hours=6)
 
-    res = db.query('SELECT * FROM stats where timestamp > "' + str(from_date) + '"')
+    res = db.query('SELECT * FROM stats where timestamp > "' + str(from_date) + '" and source = "'+ site +'"')
     urls = []
     for row in res:
         urls.append(row['url'])
@@ -112,7 +114,12 @@ def get_active_links(db):
 if __name__ == "__main__":  
     db = dataset.connect('sqlite:///stats.sqlite')
     table = db['stats']
-    site = "http://dn.se"
+
+    try:
+        site = "http://" + sys.argv[1]
+    except:
+        site = "http://dn.se"
+
     pbar = ProgressBar(term_width=60)
 
     # TODO: refactor!

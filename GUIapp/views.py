@@ -16,10 +16,13 @@ import datetime
 
 
 @app.route('/', methods=['GET'])
-def hej():                  
+@app.route('/<source>', methods=['GET'])
+def hej(source="dn.se"):                  
     engine = sq.create_engine("sqlite:///stats.sqlite")
     df = pd.read_sql_table("stats", engine)
     df = df.set_index(pd.DatetimeIndex(df['timestamp']))
+    df = df[df['source'] == "http://" + source]
+    print df
 
     today = datetime.date.today()
     from_date = today - datetime.timedelta(days=1)
