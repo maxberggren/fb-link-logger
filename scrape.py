@@ -17,6 +17,7 @@ from random import shuffle
 import json
 import time
 import sys
+import os
 
 catch_errors = (urllib2.HTTPError, 
                 urllib2.URLError, 
@@ -31,7 +32,6 @@ def get_links(url, restrict_to, deeper=True, limit=False):
 
     try:
         html = urllib2.urlopen(url).read()
-        #html = requests.get(url, allow_redirects=True).text
         soup = BeautifulSoup(html)
         
         links = set()
@@ -62,7 +62,6 @@ def get_links(url, restrict_to, deeper=True, limit=False):
                 next_depth_links.update(get_links(link, 
                                                   restrict_to=restrict_to, 
                                                   deeper=False))
-            
             links.update(next_depth_links)
 
         return list(links)
@@ -100,20 +99,31 @@ def get_major_links(url):
 
 def get_active_links(db):
 
-    today = datetime.date.today()
+    today = datetime.datetime.now()
     from_date = today - datetime.timedelta(hours=6)
 
-    res = db.query('SELECT * FROM stats where timestamp > "' + str(from_date) + '" and source = "'+ site +'"')
+    #res = db.query('SELECT * FROM stats where timestamp > "' + str(from_date) + '" and source = "'+ site +'"')
+    res = table.find(source=site)
     urls = []
     for row in res:
-        urls.append(row['url'])
+        if row['timestamp'] > from_date:
+            urls.append(row['url'])
 
     return list(set(urls))
 
 if __name__ == "__main__":  
-    db = dataset.connect('sqlite:///stats.sqlite')
+    db = dataset.connect(os.environ["DATABASE_URL"])
     table = db['stats']
 
+    # This is just for the lib to populate the 
+    # appropriate table and columns.
+    table.insert(dict(url="temp", 
+                 source="temp",
+                 timestamp=datetime.datetime.now(), 
+                 fb_comment_count=0,
+                 fb_like_count=0,
+                 fb_share_count=0,
+                 tw_count=0))
     try:
         site = "http://" + sys.argv[1]
     except:
@@ -121,7 +131,6 @@ if __name__ == "__main__":
 
     pbar = ProgressBar(term_width=60)
 
-    # TODO: refactor!
     # Get main page links
     links = get_major_links(site)
     # Get links that might be still active
@@ -146,7 +155,10 @@ if __name__ == "__main__":
         if stats and last_entry: 
             if stats['fb_share_count'] > last_entry['fb_share_count']:     
                 # If stats found and already in DB    
-                print last_entry['url'], stats['fb_share_count'] - last_entry['fb_share_count']
+                url = last_entry['url']
+                diff = stats['fb_share_count'] - last_entry['fb_share_count']
+                print "{} +{} social interactions".format(url, diff)
+                
                 table.insert(dict(url=link, 
                                   source=site,
                                   timestamp=datetime.datetime.now(),

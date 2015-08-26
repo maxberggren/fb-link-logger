@@ -230,6 +230,7 @@
 
     body {
       background-color: #fdfdfd;
+      padding: 10px;
     }
     footer {
       text-align: right;
@@ -457,6 +458,8 @@
 </head>
 
 <body class='antialiased'>
+    {% if columns %}
+
     <div class='container'>
         <div class='chart'>
             <div id='chart'></div>
@@ -468,7 +471,6 @@
     <script src="{{ url_for('static', filename='js/d3-3.5.0.min-3b564392.js') }}" type="text/javascript"></script>
     <script src="{{ url_for('static', filename='js/c3.min-12912fb6.js') }}" type="text/javascript"></script>
 
-    {% if columns %}
     <script type="text/javascript">
     var chart = c3.generate({
         data: {
@@ -522,6 +524,8 @@
         }
     });
     </script>
+    {% else %}
+    <p>Denna källan loggas ännu inte. Fråga <a href="mailto:maxberggren@gmail.com">Max</a> snällt så kanske han löser det.</p>
     {% endif %}
 </body>
 </html>
