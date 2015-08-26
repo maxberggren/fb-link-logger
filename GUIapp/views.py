@@ -14,6 +14,15 @@ import numpy as np
 import datetime
 from sqlite_cache import SqliteCache
 
+import os
+import psycopg2
+import urlparse
+
+urlparse.uses_netloc.append("postgres")
+url = urlparse.urlparse(os.environ["DATABASE_URL"])
+print url
+print os.environ["DATABASE_URL"]
+
 cache = SqliteCache("cache.sqlite") 
 
 @app.route('/', methods=['GET'])
