@@ -124,6 +124,9 @@ if __name__ == "__main__":
                  fb_like_count=0,
                  fb_share_count=0,
                  tw_count=0))
+
+    result = db.query('DELETE FROM stats WHERE id NOT IN (SELECT id FROM (select id from stats order by id desc limit 10000) AS x)')
+
     try:
         site = "http://" + sys.argv[1]
     except:
@@ -158,7 +161,7 @@ if __name__ == "__main__":
                 url = last_entry['url']
                 diff = stats['fb_share_count'] - last_entry['fb_share_count']
                 print "{} +{} social interactions".format(url, diff)
-                
+
                 table.insert(dict(url=link, 
                                   source=site,
                                   timestamp=datetime.datetime.now(),
