@@ -27,7 +27,7 @@ def hej(source="dn.se", top=25):
     if cache.get(str(source)+str(top)): # Found in cache
         xs, columns, today = cache.get(str(source)+str(top))
     else:
-        engine = sq.create_engine(os.environ["DATABASE_URL"])
+        engine = sq.create_engine('sqlite:///stats.sqlite')
         df = pd.read_sql_table("stats", engine)
         df = df.set_index(pd.DatetimeIndex(df['timestamp']))
         df = df[df['source'] == "http://" + source]

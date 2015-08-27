@@ -112,7 +112,7 @@ def get_active_links(db):
     return list(set(urls))
 
 if __name__ == "__main__":  
-    db = dataset.connect(os.environ["DATABASE_URL"])
+    db = dataset.connect('sqlite:///stats.sqlite')
     table = db['stats']
 
     # This is just for the lib to populate the 
