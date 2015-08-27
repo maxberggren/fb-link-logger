@@ -113,6 +113,7 @@ def get_active_links(db):
 
 if __name__ == "__main__":  
     db = dataset.connect(os.environ["DATABASE_URL"])
+    # sqlite:///stats.sqlite
     table = db['stats']
 
     # This is just for the lib to populate the 
@@ -125,6 +126,8 @@ if __name__ == "__main__":
                  fb_share_count=0,
                  tw_count=0))
 
+    # Remove other than the top 10k rows to
+    # nog having to pay for heroku postgres.
     result = db.query('DELETE FROM stats WHERE id NOT IN (SELECT id FROM (select id from stats order by id desc limit 10000) AS x)')
 
     try:
