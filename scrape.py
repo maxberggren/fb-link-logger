@@ -141,7 +141,7 @@ if __name__ == "__main__":
     links = get_major_links(site)
     # Get links that might be still active
     more_links = get_active_links(db)
-    # Let's not query more than we have to
+    # Let's not query more than we have to 
     links = links + more_links
     links = list(set(links))
 
