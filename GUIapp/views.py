@@ -8,6 +8,7 @@ from werkzeug import secure_filename
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import cm
+import dataset
 import pandas as pd
 import sqlalchemy as sq
 import numpy as np
@@ -17,6 +18,9 @@ from sqlite_cache import SqliteCache
 import os
 
 cache = SqliteCache("cache.sqlite") 
+db = dataset.connect(os.environ["DATABASE_URL"])
+# sqlite:///stats.sqlite
+table = db['stats']
 
 @app.route('/', methods=['GET'])
 @app.route('/<source>/top/<top>', methods=['GET'])
@@ -24,6 +28,8 @@ cache = SqliteCache("cache.sqlite")
 @app.route('/<source>/', methods=['GET'])
 def hej(source="dn.se", top=25):   
 
+    result = db.query('DELETE FROM stats WHERE id NOT IN (SELECT id FROM (select id from stats order by id desc limit 8000) AS x)')
+    print result
     #if cache.get(str(source)+str(top)): # Found in cache
     #    xs, columns, today = cache.get(str(source)+str(top))
     #else:
