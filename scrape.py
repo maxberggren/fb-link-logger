@@ -33,7 +33,7 @@ def get_links(url, restrict_to, deeper=True, limit=False):
 
     try:
         html = urllib2.urlopen(url).read()
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, "lxml")
         
         links = set()
         for a in soup.find_all('a', href=True):
