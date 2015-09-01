@@ -103,12 +103,12 @@ def get_active_links(db):
     today = datetime.datetime.now()
     from_date = today - datetime.timedelta(hours=6)
 
-    #res = db.query('SELECT * FROM stats where timestamp > "' + str(from_date) + '" and source = "'+ site +'"')
-    res = table.find(source=site)
+    res = db.query('SELECT * FROM stats where timestamp > "' + str(from_date) + '" and source = "'+ site +'"')
+    #res = table.find(source=site)
     urls = []
     for row in res:
-        if parse_date(row['timestamp']) > from_date:
-            urls.append(row['url'])
+        #if parse_date(row['timestamp']) > from_date:
+        urls.append(row['url'])
 
     return list(set(urls))
 
