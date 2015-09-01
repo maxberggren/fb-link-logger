@@ -18,6 +18,7 @@ import json
 import time
 import sys
 import os
+from dateutil.parser import parse as parse_date 
 
 catch_errors = (urllib2.HTTPError, 
                 urllib2.URLError, 
@@ -106,13 +107,13 @@ def get_active_links(db):
     res = table.find(source=site)
     urls = []
     for row in res:
-        if row['timestamp'] > from_date:
+        if parse_date(row['timestamp']) > from_date:
             urls.append(row['url'])
 
     return list(set(urls))
 
 if __name__ == "__main__":  
-    db = dataset.connect(os.environ["DATABASE_URL"])
+    db = dataset.connect('sqlite:///stats.sqlite')
     # sqlite:///stats.sqlite
     table = db['stats']
 
@@ -128,7 +129,7 @@ if __name__ == "__main__":
 
     # Remove other than the top 10k rows to
     # nog having to pay for heroku postgres.
-    result = db.query('DELETE FROM stats WHERE id NOT IN (SELECT id FROM (select id from stats order by id desc limit 10000) AS x)')
+    #result = db.query('DELETE FROM stats WHERE id NOT IN (SELECT id FROM (select id from stats order by id desc limit 10000) AS x)')
 
     try:
         site = "http://" + sys.argv[1]
