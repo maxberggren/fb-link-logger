@@ -145,6 +145,7 @@ if __name__ == "__main__":
     # Let's not query more than we have to 
     links = links + more_links
     links = list(set(links))
+    print links
 
     for link in pbar(links):
         stats = get_stats(link)   
