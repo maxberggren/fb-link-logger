@@ -4,3 +4,4 @@ old/*
 lab.ipynb
 .DS_Store
 .ipynb_checkpoints/lab-checkpoint.ipynb
+stats.sqlite
