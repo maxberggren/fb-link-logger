@@ -31,45 +31,43 @@ catch_errors = (urllib2.HTTPError,
 def get_links(url, restrict_to, deeper=True, limit=False):
     """ Get all links from a webpage """
 
-    try:
-        html = urllib2.urlopen(url).read()
-        soup = BeautifulSoup(html, "lxml")
-        
-        links = set()
-        for a in soup.find_all('a', href=True):
-            try:
-                if ((a['href'][0] == "/" 
-                     or restrict_to in a['href']) 
-                    and len(a['href']) > 5
-                    and "mailto:" not in a['href']):
 
-                    if a['href'][0] == "/":
-                        links.update(["http://www." + restrict_to + a['href']])
-                    else:
-                        links.update([a['href']])
+    html = urllib2.urlopen(url).read()
+    soup = BeautifulSoup(html, "lxml")
+    
+    links = set()
+    for a in soup.find_all('a', href=True):
+        try:
+            if ((a['href'][0] == "/" 
+                 or restrict_to in a['href']) 
+                and len(a['href']) > 5
+                and "mailto:" not in a['href']):
 
-                    if limit and len(links) > limit:
-                        break
-            except Exception:
-                pass
-       
-        if deeper:
-            next_depth_links = set()
-            pbar = ProgressBar(term_width=60)
+                if a['href'][0] == "/":
+                    links.update(["http://www." + restrict_to + a['href']])
+                else:
+                    links.update([a['href']])
 
-            i = 0
-            for link in pbar(links):
-                i += 1
-                next_depth_links.update(get_links(link, 
-                                                  restrict_to=restrict_to, 
-                                                  deeper=False))
-            links.update(next_depth_links)
+                if limit and len(links) > limit:
+                    break
+        except Exception:
+            pass
+   
+    if deeper:
+        next_depth_links = set()
+        pbar = ProgressBar(term_width=60)
 
-        return list(links)
+        i = 0
+        for link in pbar(links):
+            i += 1
+            next_depth_links.update(get_links(link, 
+                                              restrict_to=restrict_to, 
+                                              deeper=False))
+        links.update(next_depth_links)
 
-    except catch_errors:
-        print "Error while trying to connect to site"
-        return []
+    return list(links)
+
+
 
 def get_stats(url):
     data = {}
